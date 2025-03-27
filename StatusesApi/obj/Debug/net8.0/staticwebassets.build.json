@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "hkOuM61vV4s5xIPrGPVl5RoYsW4NkDb3i7A/uVoflCM=",
+  "Source": "StatusesApi",
+  "BasePath": "_content/StatusesApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

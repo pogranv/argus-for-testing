@@ -1,0 +1,700 @@
+openapi: 3.0.3
+info:
+  title: API для создания статусов
+  version: 1.0.0
+paths:
+  /business-processes/create:
+    post:
+      description: Создание нового бизнес-процесса
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBusinessProcessRequest'
+        required: true
+      responses:
+        '200':
+          description: Успешно создан бизнес-процесс
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBusinessProcessResponse'
+        '400':
+          description: Неверные данные или графа статусов не существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              
+  /business-processes/update:
+    post:
+      description: Редактирование существующего бизнес-процесса
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBusinessProcessRequest'
+        required: true
+      responses:
+        '200':
+          description: Успешно отредактирован бизнес-процесс
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateBusinessProcessResponse'
+        '400':
+          description: Неверные данные или бизнес-процесс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /business-processes:
+    get:
+      description: Получение списка бизнес-процессов с сокращенной информацией
+      responses:
+        '200':
+          description: Успешно получен список бизнес-процессов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  processes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessProcessSummary'
+  
+  /tickets/create:
+    post:
+      description: Создание нового тикета в заданной очереди
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+        required: true
+      responses:
+        '201':
+          description: Успешно создан тикет
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTicketResponse'
+        '400':
+          description: Неверные данные или очередь не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tickets/update:
+    post:
+      description: Редактирование существующего тикета
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketRequest'
+        required: true
+      responses:
+        '200':
+          description: Успешно отредактирован тикет
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTicketResponse'
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Тикет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tickets/{ticketId}:
+    get:
+      description: Получение полной информации о тикете по его ID
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          description: ID тикета для получения информации
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешно получена информация о тикете
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '404':
+          description: Тикет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+  /tickets/{ticketId}/comments:
+    post:
+      description: Добавление комментария к тикету
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          description: ID тикета, к которому нужно добавить комментарий
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCommentRequest'
+        required: true
+      responses:
+        '201':
+          description: Успешно добавлен комментарий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddCommentResponse'
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Тикет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tickets/{ticketId}/status:
+    put:
+      description: Изменение статуса у тикета
+      parameters:
+        - name: ticketId
+          in: path
+          required: true
+          description: ID тикета, статус которого нужно изменить
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: Успешно изменён статус тикета
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTicketStatusResponse'
+        '400':
+          description: Неверные данные
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Тикет не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /processes/{processId}:
+    get:
+      description: Получение информации о процессе и всех тикетах в нем
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: ID процесса для получения информации
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешно получена информация о процессе и тикетах
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessWithTicketsResponse'
+        '404':
+          description: Процесс не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    ProcessWithTicketsResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - statusGraphId
+        - statuses
+        - tickets
+      properties:
+        id:
+          type: string
+          description: ID процесса
+        name:
+          type: string
+          description: Название процесса
+        description:
+          type: string
+          description: Описание процесса
+        statusGraphId:
+          type: string
+          description: ID графа статусов, связанного с процессом
+        statuses:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - index
+              - name
+              - tickets
+            properties:
+              id:
+                type: string
+                description: ID статуса
+              index:
+                type: integer
+                description: Номер статуса в процессе
+              name:
+                type: string
+                description: Название статуса
+              tickets:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfo'
+
+    TicketInProcess:
+      type: object
+      required:
+        - id
+        - name
+        - priority
+        - deadline
+        - assignee
+        - status
+      properties:
+        id:
+          type: string
+          description: ID тикета
+        name:
+          type: string
+          description: Название тикета
+        priority:
+          type: string
+          description: Приоритет тикета
+          enum:
+            - low
+            - medium
+            - high
+        deadline:
+          type: string
+          format: date-time
+          description: Дедлайн по решению тикета в формате ISO 8601
+        assignee:
+          type: object
+          required:
+            - id
+            - userName
+            - avatar
+          properties:
+            id:
+              type: string
+              description: ID исполнителя
+            userName:
+              type: string
+              description: Имя исполнителя
+            avatar:
+              type: string
+              description: URL аватара исполнителя
+        status:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              description: ID статуса тикета
+            name:
+              type: string
+              description: Название статуса тикета
+
+    UpdateTicketStatusRequest:
+      required:
+        - statusId
+      type: object
+      properties:
+        statusId:
+          type: string
+          description: ID статуса, в который нужно перевести тикет
+
+    UpdateTicketStatusResponse:
+      type: object
+      required:
+        - ticketId
+        - statusId
+      properties:
+        ticketId:
+          type: string
+          description: ID обновлённого тикета
+        statusId:
+          type: string
+          description: ID нового статуса тикета
+
+    AddCommentRequest:
+      required:
+        - text
+        - mentionedUserIds
+      type: object
+      properties:
+        text:
+          type: string
+          description: Текст комментария
+        mentionedUserIds:
+          type: array
+          items:
+            type: string
+          description: Список ID пользователей, которых нужно уведомить
+
+    AddCommentResponse:
+      type: object
+      required:
+        - commentId
+      properties:
+        commentId:
+          type: string
+          description: ID добавленного комментария
+
+    TicketResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - ticketNumber
+        - type
+        - priority
+        - deadline
+        - created
+        - updated
+        - author
+        - assignee
+        - status
+        - comments
+      properties:
+        id:
+          type: string
+          description: ID тикета
+        name:
+          type: string
+          description: Название тикета
+        description:
+          type: string
+          description: Описание тикета
+        ticketNumber:
+          type: string
+          description: Номер тикета
+        priority:
+          type: string
+          description: Приоритет тикета
+          enum:
+            - low
+            - medium
+            - high
+        deadline:
+          type: string
+          format: date-time
+          description: Дедлайн по решению тикета в формате ISO 8601
+        created:
+          type: string
+          format: date-time
+          description: Дата и время создания тикета в формате ISO 8601
+        updated:
+          type: string
+          format: date-time
+          description: Дата и время обновления тикета в формате ISO 8601
+        author:
+          type: object
+          required:
+            - id
+            - userName
+            - avatar
+          properties:
+            id:
+              type: string
+              description: ID автора
+            userName:
+              type: string
+              description: Имя автора
+            avatar:
+              type: string
+              description: URL аватара автора
+        assignee:
+          type: object
+          required:
+            - id
+            - userName
+            - avatar
+          properties:
+            id:
+              type: string
+              description: ID исполнителя
+            userName:
+              type: string
+              description: Имя исполнителя
+            avatar:
+              type: string
+              description: URL аватара исполнителя
+        status:
+          type: object
+          required:
+            - id
+            - name
+            - availableTransitions
+          properties:
+            id:
+              type: string
+              description: ID статуса тикета
+            name:
+              type: string
+              description: Название статуса тикета
+            availableTransitions:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - name
+                properties:
+                  id:
+                    type: string
+                    description: ID статуса, в который можно перейти
+                  name:
+                    type: string
+                    description: Название статуса, в который можно перейти
+        comments:
+          type: array
+          items:
+            type: object
+            required:
+              - text
+              - author
+              - created
+              - mentionedUserIds
+            properties:
+              text:
+                type: string
+                description: Текст комментария
+              author:
+                $ref: '#/components/schemas/UserInfo'
+              created:
+                type: string
+                format: date-time
+                description: Дата и время создания комментария
+              mentionedUserIds:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfo'
+                description: Список пользователей, которых призвали в комментарии
+
+    UserInfo:
+      type: object
+      required:
+        - id
+        - userName
+        - avatar
+      properties:
+        id:
+          type: string
+          description: ID автора комментария
+        userName:
+          type: string
+          description: Имя автора комментария
+        avatar:
+          type: string
+          description: URL аватара автора комментария
+
+    UpdateTicketRequest:
+      required:
+        - ticketId
+        - name
+        - description
+        - priority
+        - deadline
+        - priority
+      type: object
+      properties:
+        ticketId:
+          type: string
+          description: ID тикета, который нужно отредактировать
+        name:
+          type: string
+          description: Новое название тикета
+        description:
+          type: string
+          description: Новое описание тикета
+        priority:
+          type: string
+          description: Новый приоритет тикета
+          enum:
+            - low
+            - medium
+            - high
+        deadline:
+          type: string
+          format: date-time
+          description: Новый дедлайн по решению тикета в формате ISO 8601 (например, "2023-10-03T12:00:00Z")
+
+    UpdateTicketResponse:
+      type: object
+      required:
+        - ticketId
+      properties:
+        ticketId:
+          type: string
+          description: ID отредактированного тикета
+
+    CreateTicketRequest:
+      required:
+        - processId
+        - name
+        - description
+        - priority
+        - deadline
+      type: object
+      properties:
+        processId:
+          type: string
+          description: ID очереди, в которой нужно создать тикет
+        name:
+          type: string
+          description: Название тикета
+        description:
+          type: string
+          description: Описание тикета
+        priority:
+          type: string
+          description: Приоритет тикета
+          enum:
+            - low
+            - medium
+            - high
+        deadline:
+          type: string
+          format: date-time
+          description: Дедлайн по решению тикета в формате ISO 8601 (например, "2023-10-03T12:00:00Z")
+        created:
+          type: string
+          format: date-time
+          description: Дата и время создания тикета в формате ISO 8601
+        updated:
+          type: string
+          format: date-time
+          description: Дата и время обновления тикета в формате ISO 8601
+
+    CreateTicketResponse:
+      type: object
+      required:
+        - ticketId
+      properties:
+        ticketId:
+          type: string
+          description: ID созданного тикета
+
+    BusinessProcessSummary:
+      type: object
+      required:
+        - id
+        - name
+        - description
+      properties:
+        id:
+          type: string
+          description: ID бизнес-процесса
+        name:
+          type: string
+          description: Название бизнес-процесса
+        description:
+          type: string
+          description: Описание бизнес-процесса
+
+    UpdateBusinessProcessRequest:
+      required:
+        - processId
+        - name
+        - description
+      type: object
+      properties:
+        processId:
+          type: string
+          description: ID бизнес-процесса, который нужно отредактировать
+        name:
+          type: string
+          description: Нновое название бизнес-процесса
+        description:
+          type: string
+          description: Новое описание бизнес-процесса
+
+    UpdateBusinessProcessResponse:
+      type: object
+      required:
+        - processId
+      properties:
+        processId:
+          type: string
+          description: ID отредактированного бизнес-процесса
+
+    CreateBusinessProcessRequest:
+      required:
+        - name
+        - description
+        - graphId
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название бизнес-процесса
+        description:
+          type: string
+          description: Описание бизнес-процесса
+        graphId:
+          type: string
+          description: ID графа статусов, который будет использоваться в бизнес-процессе
+
+    CreateBusinessProcessResponse:
+      type: object
+      required:
+        - processId
+      properties:
+        processId:
+          type: string
+          description: ID созданного бизнес-процесса
+
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Описание ошибки

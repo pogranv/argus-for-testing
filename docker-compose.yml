@@ -1,0 +1,137 @@
+version: "3.9"
+
+networks:
+  microservices-network:
+    driver: bridge
+
+services:
+  # Sensors микросервис и его БД
+  sensors-api:
+    ports:
+      - "5003:5003"
+    build:
+      context: ./SensorsApi
+      dockerfile: Dockerfile
+    container_name: sensors_api
+    environment:
+      - TZ=Europe/Moscow
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=sensors_db;Port=5432;Database=sensors_db;Username=postgres;Password=sensors_password
+    networks:
+      - microservices-network
+    depends_on:
+      sensors_db:
+        condition: service_healthy
+
+  sensors_db:
+    image: postgres:latest
+    container_name: sensors_db
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sensors_password
+      POSTGRES_DB: sensors_db
+    volumes:
+      - ./SensorsApi/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - sensors_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sensors_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Processes микросервис и его БД
+  processes-api:
+    ports:
+      - "5002:5002"
+    build:
+      context: ./ProcessesApi
+      dockerfile: Dockerfile
+    container_name: processes_api
+    environment:
+      - TZ=Europe/Moscow
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=processes_db;Port=5432;Database=processes_db;Username=postgres;Password=processes_password
+    networks:
+      - microservices-network
+    depends_on:
+      processes_db:
+        condition: service_healthy
+
+  processes_db:
+    image: postgres:latest
+    container_name: processes_db
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: processes_password
+      POSTGRES_DB: processes_db
+    volumes:
+      - ./ProcessesApi/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - processes_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d processes_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Statuses микросервис и его БД
+  statuses-api:
+    ports:
+      - "5001:5001"
+    build:
+      context: ./StatusesApi
+      dockerfile: Dockerfile
+    container_name: statuses_api
+    environment:
+      - TZ=Europe/Moscow
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=statuses_db;Port=5432;Database=statuses_db;Username=postgres;Password=statuses_password
+    networks:
+      - microservices-network
+    depends_on:
+      statuses_db:
+        condition: service_healthy
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin123"
+    ports:
+      - "16543:80"
+    networks:
+      - microservices-network
+    depends_on:
+      - sensors_db
+      - processes_db
+      - statuses_db
+
+  statuses_db:
+    image: postgres:latest
+    container_name: statuses_db
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: statuses_password
+      POSTGRES_DB: statuses_db
+    volumes:
+      - ./StatusesApi/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - statuses_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d statuses_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sensors_data:
+  processes_data:
+  statuses_data:
