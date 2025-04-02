@@ -16,6 +16,15 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.WebHost.UseUrls("http://*:5000");
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCorsPolicy", builder =>
+        builder.WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
 #region Swagger Configuration
 builder.Services.AddSwaggerGen(swagger =>
 {
