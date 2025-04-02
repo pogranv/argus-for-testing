@@ -269,3 +269,6 @@
 /Users/pogranv/Desktop/diplom/code/services/StatusesApi/obj/Debug/net8.0/StatusesApi.genruntimeconfig.cache
 /Users/pogranv/Desktop/diplom/code/services/StatusesApi/obj/Debug/net8.0/ref/StatusesApi.dll
 /Users/pogranv/Desktop/diplom/code/services/StatusesApi/obj/Debug/net8.0/StatusesApi.sourcelink.json
+/Users/pogranv/Desktop/diplom/code/services/StatusesApi/bin/Debug/net8.0/StatusesApi.xml
+/Users/pogranv/Desktop/diplom/code/services/StatusesApi/obj/Debug/net8.0/StatusesApi.xml
+/Users/pogranv/Desktop/diplom/code/services/StatusesApi/bin/Debug/net8.0/Swashbuckle.AspNetCore.Annotations.dll

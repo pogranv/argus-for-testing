@@ -2,7 +2,7 @@ using System.Text.Json;
 using ProcessesApi.External.Impl.View;
 using ProcessesApi.External.Interfaces;
 using ProcessesApi.Models;
-
+using Microsoft.AspNetCore.Http;
 namespace ProcessesApi.External.Impl;
 
 public class GraphService : IGraphService
@@ -10,8 +10,9 @@ public class GraphService : IGraphService
     private readonly HttpClient _httpClient;
     private readonly ILogger<GraphService> _logger;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public GraphService(HttpClient httpClient, ILogger<GraphService> logger)
+    public GraphService(HttpClient httpClient, ILogger<GraphService> logger, IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
         _logger = logger;
@@ -19,6 +20,7 @@ public class GraphService : IGraphService
         {
             PropertyNameCaseInsensitive = true
         };
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public bool IsGraphExists(Guid graphId) 
@@ -33,7 +35,13 @@ public class GraphService : IGraphService
         {
             var query = $"?graphIds={graphId}";
 
-            var response = await _httpClient.GetAsync($"/api/v1/graphs{query}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/graphs{query}");
+            var userId = _httpContextAccessor.HttpContext?.Items["UserId"] as long?;
+            var robotId = _httpContextAccessor.HttpContext?.Items["RobotId"] as long?;
+            request.Headers.Add("UserId", userId.ToString());
+            request.Headers.Add("RobotId", robotId.ToString());
+
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();

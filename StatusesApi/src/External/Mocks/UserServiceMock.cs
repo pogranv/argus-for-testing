@@ -20,7 +20,7 @@ public class UserServiceMock : IUserService
     {
         var users = new Dictionary<long, Models.UserInfo>();
         for (int i = 0; i < userIds.Count; i++) {
-            users.Add(userIds[i], new Models.UserInfo { Id = userIds[i], UserName = "user_name_" + userIds[i], Avatar = "https://example.com/avatar_" + userIds[i] });
+            users.Add(userIds[i], new Models.UserInfo { Id = userIds[i], Name = "user_name_" + userIds[i], Avatar = "https://example.com/avatar_" + userIds[i] });
         }
         return users;
     }   

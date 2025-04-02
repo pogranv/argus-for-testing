@@ -14,7 +14,6 @@ using StatusesApi.Models.View;
 [ApiController]
 public class GraphsController : ControllerBase
 {
-
     private readonly IStatusService _statusService;
     private readonly StatusDbContext _dbContext;
 
@@ -120,7 +119,14 @@ public class GraphsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Создание графа
+    /// </summary>
+    /// <param name="request">Запрос на создание графа</param>
+    /// <returns>ID созданного графа</returns>
     [HttpPost("api/v1/graphs")]
+    [ProducesResponseType(typeof(CreateGraphResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public IActionResult CreateGraph([FromBody] CreateGraphRequest request)
     {
         try 
@@ -132,7 +138,6 @@ public class GraphsController : ControllerBase
             return BadRequest(new ErrorResponse { Message = e.Message });
         }
 
-        // Создаем новый граф
         var graph = new Graph
         {
             Id = Guid.NewGuid(),
@@ -140,17 +145,14 @@ public class GraphsController : ControllerBase
             Description = request.Description
         };
 
-        // Создаем статусы и связи
         var statusFlows = new List<StatusFlow>();
         var statusOrderMap = new Dictionary<Guid, int>();
         
-        // Заполняем порядок статусов
         for (int i = 0; i < request.Vertexes.Count; i++)
         {
             statusOrderMap[request.Vertexes[i]] = i;
         }
 
-        // Создаем связи между статусами
         foreach (var vertex in request.Vertexes)
         {
             var nextStatusIds = request.Edges
@@ -169,21 +171,25 @@ public class GraphsController : ControllerBase
             statusFlows.Add(statusFlow);
         }
 
-        // Сохраняем в базу
         _dbContext.Graphs.Add(graph);
         _dbContext.StatusFlows.AddRange(statusFlows);
         _dbContext.SaveChanges();
 
-        return Ok(new 
+        return Ok(new CreateGraphResponse
         { 
-            graphId = graph.Id.ToString() 
+            GraphId = graph.Id.ToString() 
         });
     }
     
+    /// <summary>
+    /// Получение доступных переходов для статуса
+    /// </summary>
+    /// <param name="statusId">ID статуса</param>
+    /// <param name="graphId">ID графа</param>
+    /// <returns>Список доступных переходов</returns>
     [HttpGet("internal/v1/statuses/transition")]
     public IActionResult GetStatusTransition([FromQuery] Guid? statusId, [FromQuery] Guid graphId)
     {
-        // Находим граф с подгрузкой статусов
         var graph = _dbContext.Graphs
             .Include(g => g.StatusFlows)
             .FirstOrDefault(g => g.Id == graphId);
@@ -193,7 +199,6 @@ public class GraphsController : ControllerBase
             return NotFound(new ErrorResponse { Message = "Граф не найден" });
         }
 
-        // Находим текущий статус в графе
         var currentStatusFlow = graph.StatusFlows
             .FirstOrDefault(sf => (statusId == null && sf.OrderNum == 0) || (statusId != null && sf.StatusId == statusId));
         
@@ -224,11 +229,15 @@ public class GraphsController : ControllerBase
         return _statusService.GetStatusesInGraph(graphId).Select(s => new StatusInGraphResponse(s)).ToList();
     }
     
+    /// <summary>
+    /// Получение списка графов
+    /// </summary>
+    /// <param name="graphIds">Список ID графов</param>
+    /// <returns>Список графов</returns>
     [HttpGet("api/v1/graphs")]
+    [ProducesResponseType(typeof(GetGraphsResponse), StatusCodes.Status200OK)]
     public IActionResult GetGraphs([FromQuery] List<Guid> graphIds)
     {
-        
-        
         var graphs = _dbContext.Graphs
             .Include(g => g.StatusFlows)
             .Where(g => !graphIds.Any() || graphIds.Contains(g.Id))
@@ -242,7 +251,9 @@ public class GraphsController : ControllerBase
                 Statuses = GetStatuses(g.Id)
             }).ToList();
 
-        return Ok(new { graphs = responseGraphs });
+        return Ok(new GetGraphsResponse {
+            Graphs = responseGraphs
+        });
         
     }
 }

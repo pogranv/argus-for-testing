@@ -1,0 +1,428 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ProcessesApi</name>
+    </assembly>
+    <members>
+        <member name="M:ProcessesController.CreateProcess(ProcessesApi.Models.View.Requests.CreateProcessRequest)">
+            <summary>
+            Создание нового процесса
+            </summary>
+            <param name="request">Запрос на создание процесса</param>
+            <returns>Ответ с идентификатором созданного процесса</returns>
+        </member>
+        <member name="M:ProcessesController.UpdateProcess(System.Guid,ProcessesApi.Models.View.Requests.UpdateProcessRequest)">
+            <summary>
+            Обновление процесса
+            </summary>
+            <param name="processId">Идентификатор процесса</param>
+            <param name="request">Запрос на обновление процесса</param>
+            <returns>Ответ с идентификатором обновленного процесса</returns>
+        </member>
+        <member name="M:ProcessesController.GetProcesses">
+            <summary>
+            Получение списка процессов
+            </summary>
+            <returns>Список процессов</returns>
+        </member>
+        <member name="M:TicketsController.CreateTicket(ProcessesApi.Models.View.Requests.CreateTicketRequest)">
+            <summary>
+            Создание нового тикета
+            </summary>
+            <param name="request">Запрос на создание тикета</param>
+            <returns>Ответ с идентификатором созданного тикета</returns>
+        </member>
+        <member name="M:TicketsController.MoveTicket(System.Guid,System.Nullable{System.Guid})">
+            <summary>
+            Перемещение тикета в другой статус
+            </summary>
+            <param name="ticketId">Идентификатор тикета</param>
+            <param name="newStatusId">Идентификатор нового статуса</param>
+            <returns>Ответ с идентификатором перемещенного тикета</returns>     
+        </member>
+        <member name="M:TicketsController.CreateComment(System.Guid,ProcessesApi.Models.View.Requests.CreateCommentRequest)">
+            <summary>
+            Создание комментария к тикету
+            </summary>
+            <param name="ticketId">Идентификатор тикета</param>
+            <param name="request">Запрос на создание комментария</param>
+            <returns>Ответ с идентификатором созданного комментария</returns>   
+        </member>
+        <member name="M:TicketsController.UpdateTicket(System.Guid,ProcessesApi.Models.View.Requests.UpdateTicketRequest)">
+            <summary>
+            Обновление тикета
+            </summary>
+            <param name="ticketId">Идентификатор тикета</param>
+            <param name="request">Запрос на обновление тикета</param>
+            <returns>Ответ с идентификатором обновленного тикета</returns>
+        </member>
+        <member name="M:TicketsController.GetTicket(System.Guid)">
+            <summary>
+            Получение тикета по идентификатору
+            </summary>
+            <param name="ticketId">Идентификатор тикета</param>
+            <returns>Ответ с тикетом</returns>
+        </member>
+        <member name="M:TicketsController.GetTickets(System.Guid)">
+            <summary>
+            Получение списка тикетов по идентификатору процесса
+            </summary>
+            <param name="processId">Идентификатор процесса</param>
+            <returns>Ответ с списком тикетов</returns>
+        </member>
+        <member name="M:ProcessesApi.External.Interfaces.IUserService.GetUnexistingUsers(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Получает список пользователей, которые не существуют в системе
+            </summary>
+            <param name="userIds">Список идентификаторов пользователей</param>
+            <returns>Список идентификаторов пользователей, которые не существуют в системе</returns>
+        </member>
+        <member name="M:ProcessesApi.External.Interfaces.IUserService.GetUsersInfo(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Получает информацию о пользователях по их идентификаторам
+            </summary>
+            <param name="userIds">Список идентификаторов пользователей</param>
+            <returns>Словарь, где ключом является идентификатор пользователя, а значением - информация о пользователе</returns>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Comment.Id">
+            <summary>
+            Идентификатор комментария
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Comment.Text">
+            <summary>
+            Текст комментария
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Comment.MentionedUsers">
+            <summary>
+            Список пользователей, которые были упомянуты в комментарии
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Comment.Author">
+            <summary>
+            Автор комментария
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Comment.CreatedAt">
+            <summary>
+            Дата создания комментария
+            </summary>
+        </member>
+        <member name="F:ProcessesApi.Models.View.Priority.low">
+            <summary>   
+            Низкий приоритет
+            </summary>
+        </member>
+        <member name="F:ProcessesApi.Models.View.Priority.medium">
+            <summary>
+            Средний приоритет
+            </summary>
+        </member>
+        <member name="F:ProcessesApi.Models.View.Priority.high">
+            <summary>
+            Высокий приоритет
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateCommentRequest.Text">
+            <summary>
+            Текст комментария
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateCommentRequest.MentionedUserIds">
+            <summary>
+            Идентификаторы пользователей, которых нужно упомянуть в комментарии
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateProcessRequest.Name">
+            <summary>
+            Название процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateProcessRequest.Description">
+            <summary>
+            Описание процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateProcessRequest.GraphId">
+            <summary>
+            Идентификатор графа
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateTicketRequest.Name">
+            <summary>
+            Название тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateTicketRequest.Description">
+            <summary>
+            Описание тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateTicketRequest.ProcessId">
+            <summary>
+            Идентификатор процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateTicketRequest.Priority">
+            <summary>
+            Приоритет тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.CreateTicketRequest.Deadline">
+            <summary>
+            Дедлайн выполнения
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateProcessRequest.Name">
+            <summary>
+            Название процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateProcessRequest.Description">
+            <summary>
+            Описание процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateTicketRequest.Name">
+            <summary>
+            Название тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateTicketRequest.Description">
+            <summary>
+            Описание тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateTicketRequest.Priority">
+            <summary>
+            Приоритет тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Requests.UpdateTicketRequest.Deadline">
+            <summary>
+            Срок выполнения
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.CreateCommentResponse.CommentId">
+            <summary>
+            Идентификатор комментария
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.CreateUpdateProcessResponse.ProcessId">
+            <summary>
+            Идентификатор процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.CreateUpdateTicketResponse.TicketId">
+            <summary>
+            Идентификатор тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.ErrorResponse.Message">
+            <summary>
+            Сообщение об ошибке
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessesSummaryResponse.Processes">
+            <summary>
+            Список процессов
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessResponse.Id">
+            <summary>   
+            Идентификатор процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessResponse.Name">
+            <summary>
+            Название процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessResponse.Description">
+            <summary>
+            Описание процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessResponse.GraphId">
+            <summary>
+            Идентификатор графа
+            </summary>  
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessResponse.Statuses">
+            <summary>
+            Список статусов с тикетами
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessSummaryResponse.Id">
+            <summary>
+            Идентификатор процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessSummaryResponse.Name">
+            <summary>
+            Название процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessSummaryResponse.Description">
+            <summary>
+            Описание процесса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetProcessSummaryResponse.GraphId">
+            <summary>
+            Идентификатор графа
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Id">
+            <summary>
+            Идентификатор тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Name">
+            <summary>
+            Название тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Description">
+            <summary>
+            Описание тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Priority">
+            <summary>
+            Приоритет тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Deadline">
+            <summary>
+            Дедлайн выполнения
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.CreatedAt">
+            <summary>
+            Дата создания
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.UpdatedAt">
+            <summary>
+            Дата обновления
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Author">
+            <summary>
+            Автор тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Executor">
+            <summary>
+            Исполнитель тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Status">
+            <summary>
+            Статус тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Responses.GetTicketResponse.Comments">
+            <summary>
+            Список комментариев
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Status.Id">
+            <summary>
+            Идентификатор статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Status.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Status.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Status.Transitions">
+            <summary>
+            Список переходов
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.StatusWithTickets.Id">
+            <summary>
+            Идентификатор статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.StatusWithTickets.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.StatusWithTickets.OrderNum">
+            <summary>
+            Порядковый номер статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.StatusWithTickets.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.StatusWithTickets.Tickets">
+            <summary>
+            Список тикетов
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.TicketSnippet.Id">
+            <summary>
+            Идентификатор тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.TicketSnippet.Name">
+            <summary>
+            Название тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.TicketSnippet.Priority">
+            <summary>
+            Приоритет тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.TicketSnippet.Deadline">
+            <summary>
+            Дедлайн выполнения
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.TicketSnippet.Executor">
+            <summary>
+            Исполнитель тикета
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Transition.ToStatusId">
+            <summary>
+            Идентификатор статуса, в который осуществляется переход
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.Transition.Name">
+            <summary>
+            Название перехода
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.UserInfo.Id">
+            <summary>
+            Идентификатор пользователя
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.UserInfo.Name">
+            <summary>
+            Имя пользователя
+            </summary>
+        </member>
+        <member name="P:ProcessesApi.Models.View.UserInfo.Avatar">
+            <summary>
+            Аватар пользователя
+            </summary>
+        </member>
+    </members>
+</doc>

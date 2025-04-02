@@ -10,21 +10,29 @@ public class ProcessesService : IProcessesService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ProcessesService(HttpClient httpClient)
+    public ProcessesService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
+        _httpContextAccessor = httpContextAccessor;
     }
 
     private async Task<bool> IsProcessExistsAsync(Guid processId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"/api/v1/processes");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/processes");
+            var userId = _httpContextAccessor.HttpContext?.Items["UserId"] as long?;
+            var robotId = _httpContextAccessor.HttpContext?.Items["RobotId"] as long?;
+            request.Headers.Add("UserId", userId.ToString());
+            request.Headers.Add("RobotId", robotId.ToString());
+            
+            var response = await _httpClient.SendAsync(request);
             // TODO: обрабатывать ошибки
             response.EnsureSuccessStatusCode();
 
@@ -67,6 +75,10 @@ public class ProcessesService : IProcessesService
                 jsonContent, 
                 Encoding.UTF8, 
                 "application/json");
+            var userId = _httpContextAccessor.HttpContext?.Items["UserId"] as long?;
+            var robotId = _httpContextAccessor.HttpContext?.Items["RobotId"] as long?;
+            httpContent.Headers.Add("UserId", userId.ToString());
+            httpContent.Headers.Add("RobotId", robotId.ToString());
 
             var response = await _httpClient.PostAsync("/api/v1/tickets", httpContent);
             
@@ -95,7 +107,6 @@ public class ProcessesService : IProcessesService
 
     public Guid CreateTicket(Ticket ticket)
     {
-
         return CreateTicketAsync(ticket).GetAwaiter().GetResult();
     }
 }

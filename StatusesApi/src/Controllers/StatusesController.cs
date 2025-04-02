@@ -44,23 +44,23 @@ public class StatusesController : ControllerBase
         throw new Exception("Неизвестный тип уведомления");
     } 
  
-    // POST: api/v1/statuses
+    /// <summary>
+    /// Создание статуса
+    /// </summary>
+    /// <param name="request">Запрос на создание статуса</param>
+    /// <returns>ID созданного статуса</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(CreateStatusResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public IActionResult CreateStatus([FromBody] CreateStatusRequest request)
     {
-        try {
-            if (request.Comment?.UserIds != null && request.Comment.UserIds.Count > 0)
-            {
-                var unexistingUserIds = _userService.GetUnexistingUsers(request.Comment.UserIds);
-                if (unexistingUserIds.Count > 0)
-                {
-                    return BadRequest(new ErrorResponse { Message = "Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют" });
-                }
-            }
-        }
-        catch (ErrorResponseException ex)
+        if (request.Comment?.UserIds != null && request.Comment.UserIds.Count > 0)
         {
-            return BadRequest(new ErrorResponse { Message = ex.Message });
+            var unexistingUserIds = _userService.GetUnexistingUsers(request.Comment.UserIds);
+            if (unexistingUserIds.Count > 0)
+            {
+                return BadRequest(new ErrorResponse { Message = "Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют" });
+            }
         }
 
 
@@ -69,7 +69,7 @@ public class StatusesController : ControllerBase
             return BadRequest(new ErrorResponse { Message = "Дежурство с идентификатором " + request.DutyId + " не существует" });
         }
          
-            var status = new StatusesApi.Repositories.Status
+        var status = new StatusesApi.Repositories.Status
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
@@ -85,29 +85,31 @@ public class StatusesController : ControllerBase
         _dbContext.Statuses.Add(status);
         _dbContext.SaveChanges();
 
-            return Ok(new CreateStatusResponse
-            {
-                StatusId = status.Id
-            });
+        return Ok(new CreateStatusResponse
+        {
+            StatusId = status.Id
+        });
     }
 
-    // PUT: api/v1/statuses
+    /// <summary>
+    /// Обновление статуса
+    /// </summary>
+    /// <param name="request">Запрос на обновление статуса</param>
+    /// <returns>ID обновленного статуса</returns>
     [HttpPut]
+    [ProducesResponseType(typeof(UpdateStatusResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public IActionResult UpdateStatus([FromBody] UpdateStatusRequest request)
     {
-        try {
-            if (request.Comment?.UserIds != null && request.Comment.UserIds.Count > 0)
-            {
-                var unexistingUserIds = _userService.GetUnexistingUsers(request.Comment.UserIds);
-                if (unexistingUserIds.Count > 0)
-                {
-                    return BadRequest(new ErrorResponse { Message = "Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют" });
-                }
-            }
-        }
-        catch (ErrorResponseException ex)
+
+        if (request.Comment?.UserIds != null && request.Comment.UserIds.Count > 0)
         {
-            return BadRequest(new ErrorResponse { Message = ex.Message });
+            var unexistingUserIds = _userService.GetUnexistingUsers(request.Comment.UserIds);
+            if (unexistingUserIds.Count > 0)
+            {
+                return BadRequest(new ErrorResponse { Message = "Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют" });
+            }
         }
 
 
@@ -120,16 +122,16 @@ public class StatusesController : ControllerBase
         if (status == null)
         {
                 return NotFound(new ErrorResponse { Message = "Статус с идентификатором " + request.StatusId + " не найден" });
-            }
+        }
 
-            status.Name = request.Name;
-            status.Description = request.Description;
-            status.SlaMinutes = (int?)request.EscalationSLA;
-            status.IntervalMinutes = request.Notification?.PingInterval;
-            status.NotificationType = GetNotificationType(request.Notification?.DeliveryType);
-            status.Comment = request.Comment?.Text;
-            status.MentionedUserIds = request.Comment?.UserIds ?? new List<long>();
-            status.DutyId = request.DutyId.Value;
+        status.Name = request.Name;
+        status.Description = request.Description;
+        status.SlaMinutes = (int?)request.EscalationSLA;
+        status.IntervalMinutes = request.Notification?.PingInterval;
+        status.NotificationType = GetNotificationType(request.Notification?.DeliveryType);
+        status.Comment = request.Comment?.Text;
+        status.MentionedUserIds = request.Comment?.UserIds ?? new List<long>();
+        status.DutyId = request.DutyId.Value;
 
         _dbContext.SaveChanges();
 
@@ -139,15 +141,20 @@ public class StatusesController : ControllerBase
         });    
     }
 
-    // GET: api/v1/statuses
+    /// <summary>
+    /// Получение списка статусов
+    /// </summary>
+    /// <param name="ids">Список ID статусов</param>
+    /// <returns>Список статусов</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(GetStatusesResponse), StatusCodes.Status200OK)]
     public IActionResult GetStatuses([FromQuery] List<Guid> ids)
     {
         var statuses = _statusService.GetStatuses(ids);
 
-        return Ok(new
+        return Ok(new GetStatusesResponse
         {
-            statuses = statuses.Select(s => new StatusResponse(s)).ToList()
+            Statuses = statuses.Select(s => new StatusResponse(s)).ToList()
         });
     }   
     

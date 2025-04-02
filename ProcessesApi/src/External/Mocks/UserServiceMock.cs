@@ -4,18 +4,18 @@ namespace ProcessesApi.External.Mocks;
 public class UserServiceMock : IUserService
 {
     private long unexistingUserId = 10;
-    public HashSet<long> GetUnexistingUsers(HashSet<long> userIds)
+    public List<long> GetUnexistingUsers(List<long> userIds)
     {
 
         if (userIds.Contains(unexistingUserId))
         {
-            return new HashSet<long> { unexistingUserId };
+            return new List<long> { unexistingUserId };
         }
 
-        return new HashSet<long>();
+        return new List<long>();
     }
 
-    public Dictionary<long, Models.UserInfo> GetUsersInfo(HashSet<long> userIds)
+    public Dictionary<long, Models.UserInfo> GetUsersInfo(List<long> userIds)
     {
         var users = new Dictionary<long, Models.UserInfo>();
         foreach (var userId in userIds) {

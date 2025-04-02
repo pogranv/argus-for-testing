@@ -1,0 +1,65 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "sensors-api",
+            "Port": 5003
+          }
+        ],
+        "UpstreamPathTemplate": "/sensors/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Jwt"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "processes-api",
+            "Port": 5002
+          }
+        ],
+        "UpstreamPathTemplate": "/processes/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Jwt"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "statuses-api",
+            "Port": 5001
+          }
+        ],
+        "UpstreamPathTemplate": "/statuses/{everything}",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+        "AuthenticationOptions": {
+          "AuthenticationProviderKey": "Jwt"
+        }
+      },
+      {
+        "DownstreamPathTemplate": "/api/auth/login",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "proxy-api",
+            "Port": 5000
+          }
+        ],
+        "UpstreamPathTemplate": "/auth/login",
+        "UpstreamHttpMethod": [ "POST" ]
+      }
+    ],
+    "GlobalConfiguration": {
+      "BaseUrl": "http://proxy-api:5000"
+    }
+  }
+  

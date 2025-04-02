@@ -5,6 +5,7 @@ namespace ProcessesApi.External.Impl;
 
 public class NotificationService : INotificationService
 {
+    // TODO: send headers
     public void NotifyMentionedUsers(List<long> mentionedUserIds, Guid ticketId)
     {
         throw new NotImplementedException();

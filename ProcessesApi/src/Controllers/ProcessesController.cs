@@ -20,7 +20,14 @@ public class ProcessesController : ControllerBase
         _dbContext = dbContext;
     }   
     
+    /// <summary>
+    /// Создание нового процесса
+    /// </summary>
+    /// <param name="request">Запрос на создание процесса</param>
+    /// <returns>Ответ с идентификатором созданного процесса</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(CreateUpdateProcessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestObjectResult), StatusCodes.Status400BadRequest)]
     public IActionResult CreateProcess([FromBody] CreateProcessRequest request)
     {
         if (!_graphService.IsGraphExists(request.GraphId.Value))
@@ -39,27 +46,40 @@ public class ProcessesController : ControllerBase
         _dbContext.Processes.Add(process);
         _dbContext.SaveChanges();
 
-        return Ok(new {processId = process.Id});
+        return Ok(new CreateUpdateProcessResponse { ProcessId = process.Id });
     }
 
+    /// <summary>
+    /// Обновление процесса
+    /// </summary>
+    /// <param name="processId">Идентификатор процесса</param>
+    /// <param name="request">Запрос на обновление процесса</param>
+    /// <returns>Ответ с идентификатором обновленного процесса</returns>
     [HttpPut("{processId}")]
+    [ProducesResponseType(typeof(CreateUpdateProcessResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(NotFoundObjectResult), StatusCodes.Status404NotFound)]
     public IActionResult UpdateProcess([FromRoute] Guid processId, [FromBody] UpdateProcessRequest request)
     {
         var process = _dbContext.Processes.Find(processId);
         if (process == null)
         {
-                return NotFound("Процесс с id " + processId + " не найден");
-            }
+            return NotFound("Процесс с id " + processId + " не найден");
+        }
 
-            process.Name = request.Name;
-            process.Description = request.Description;
+        process.Name = request.Name;
+        process.Description = request.Description;
 
         _dbContext.SaveChanges();
 
-        return Ok(new { processId = process.Id });
+        return Ok(new CreateUpdateProcessResponse { ProcessId = process.Id });
     }
 
+    /// <summary>
+    /// Получение списка процессов
+    /// </summary>
+    /// <returns>Список процессов</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(GetProcessesSummaryResponse), StatusCodes.Status200OK)]
     public IActionResult GetProcesses()
     {
         var processes = _dbContext.Processes.ToList().Select(p => new ProcessesApi.Models.Process
@@ -69,7 +89,7 @@ public class ProcessesController : ControllerBase
                 Description = p.Description,
                 GraphId = p.GraphId
         }).ToList();
-        var response_processes = processes.Select(p => new GetProcessSummaryResponse(p)).ToList();
-        return Ok(new { processes = response_processes });
+        var responseProcesses = processes.Select(p => new GetProcessSummaryResponse(p)).ToList();
+        return Ok(new GetProcessesSummaryResponse { Processes = responseProcesses });
     }
 }

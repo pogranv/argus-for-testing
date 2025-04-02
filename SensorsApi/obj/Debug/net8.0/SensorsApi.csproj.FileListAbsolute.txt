@@ -134,3 +134,5 @@
 /Users/pogranv/Desktop/diplom/code/services/SensorsApi/bin/Debug/net8.0/Npgsql.dll
 /Users/pogranv/Desktop/diplom/code/services/SensorsApi/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/pogranv/Desktop/diplom/code/services/SensorsApi/obj/Debug/net8.0/SensorsApi.sourcelink.json
+/Users/pogranv/Desktop/diplom/code/services/SensorsApi/bin/Debug/net8.0/SensorsApi.xml
+/Users/pogranv/Desktop/diplom/code/services/SensorsApi/obj/Debug/net8.0/SensorsApi.xml

@@ -18,7 +18,14 @@ public class SensorsController : ControllerBase
         _dbContext = dbContext;
     }   
 
+    /// <summary>
+    /// Создает новый датчик
+    /// </summary>
+    /// <param name="request">Данные для создания датчика</param>
+    /// <returns>Идентификатор датчика</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(CreateUpdateSensorResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     public IActionResult CreateSensor([FromBody] CreateSensorRequest request)
     {
         if (!_processesService.IsProcessExists(request.ProcessId.Value))
@@ -40,21 +47,30 @@ public class SensorsController : ControllerBase
         _dbContext.Sensors.Add(sensor);
         _dbContext.SaveChanges();
 
-        return Ok(new { sensorId = sensor.Id });
+        return Ok(new CreateUpdateSensorResponse { SensorId = sensor.Id });
     }
 
+    /// <summary>
+    /// Обновляет существующий датчик
+    /// </summary>
+    /// <param name="id">Идентификатор датчика</param>
+    /// <param name="request">Данные для обновления датчика</param>
+    /// <returns>Идентификатор датчика</returns>    
     [HttpPut("{id}")]
+    [ProducesResponseType(typeof(CreateUpdateSensorResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     public IActionResult UpdateSensor([FromRoute] Guid id, [FromBody] UpdateSensorRequest request)
     {
         if (!_processesService.IsProcessExists(request.ProcessId.Value))
         {
-            return BadRequest(new { message = "Процесс с id " + request.ProcessId + " не найден" });
+            return BadRequest(new ErrorResponse { Message = "Процесс с id " + request.ProcessId + " не найден" });
         }
 
         var sensor = _dbContext.Sensors.Find(id);
         if (sensor == null)
         {
-            return NotFound(new { message = "Датчик с id " + id + " не найден" });
+            return NotFound(new ErrorResponse { Message = "Датчик с id " + id + " не найден" });
         }
 
         if (request.ResolveDaysCount == null)
@@ -74,12 +90,19 @@ public class SensorsController : ControllerBase
 
         _dbContext.SaveChanges();
 
-        return Ok(new { sensorId = sensor.Id });
+        return Ok(new CreateUpdateSensorResponse { SensorId = sensor.Id });
     }
 
+    /// <summary>
+    /// Получает список датчиков
+    /// </summary>
+    /// <param name="ids">Список идентификаторов датчиков</param>
+    /// <returns>Список датчиков</returns>
     [HttpGet]
+    [ProducesResponseType(typeof(GetSensorsResponse), StatusCodes.Status200OK)]
     public IActionResult GetSensors([FromQuery] List<Guid> ids)
     {
+
         var sensors = _dbContext.Sensors.Where(s => ids == null || ids.Count == 0 || ids.Contains(s.Id)).ToList();
         var sensorsResponse = sensors.Select(s => new GetSensorResponse
         {
@@ -90,7 +113,7 @@ public class SensorsController : ControllerBase
                 ResolveDaysCount = s.ResolveDaysCount == null ? null : (uint)s.ResolveDaysCount,
                 ProcessId = s.BusinessProcessId
             }).ToList();
-        return Ok(new { sensors = sensorsResponse });
+        return Ok(new GetSensorsResponse { Sensors = sensorsResponse });
     }
     
 }

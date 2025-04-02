@@ -42,55 +42,54 @@ public class TicketService : ITicketService
 
     public Guid CreateTicket(Guid processId, string name, string description, long authorId, long robotId, Priority priority, DateTime? deadline)
     {
-        using (var db = _dbContext) {
-            var process = db.Processes.Find(processId);
-            if (process == null) {
-                throw new Exception("Процесс с id " + processId + " не найден");
-            }
-        
-            var status = _graphService.GetFirstStatus(process.GraphId);
-            var dutyInfo = _dutyService.GetDutyInfo(status.DutyId);
-
-            var notificationIds = PutNotifications(status.Notification, status.EscalationSLA, dutyInfo);
-            
-            if (deadline.HasValue)
-            {
-                var dt = deadline.Value;
-                deadline = new DateTime(dt.Ticks, DateTimeKind.Unspecified);
-            }
-
-            var ticket = new Ticket {
-                Id = Guid.NewGuid(),
-                Name = name,
-                Description = description,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                Deadline = deadline,
-                AuthorId = authorId,
-                ExecutorId = dutyInfo.ResponsibleId,
-                BusinessProcessId = processId,
-                StatusId = status.Id,
-                Priority = priority,
-                NotificationIds = notificationIds,
-            };
-            _dbContext.Tickets.Add(ticket);
-            try 
-            {
-                _dbContext.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                var pgEx = ex.InnerException as PostgresException;
-                Console.WriteLine($"Postgres Error: {pgEx?.SqlState} - {pgEx?.MessageText}");
-                throw;
-            }
-
-            if (status.Comment != null) {   
-                _commentService.CreateComment(ticket.Id, status.Comment.Text, status.Comment.MentionedUserIds, robotId);
-            }
-
-            return ticket.Id;
+        var process = _dbContext.Processes.Find(processId);
+        if (process == null) {
+            throw new Exception("Процесс с id " + processId + " не найден");
         }
+    
+        var status = _graphService.GetFirstStatus(process.GraphId);
+        var dutyInfo = _dutyService.GetDutyInfo(status.DutyId);
+
+        var notificationIds = PutNotifications(status.Notification, status.EscalationSLA, dutyInfo);
+        
+        if (deadline.HasValue)
+        {
+            var dt = deadline.Value;
+            deadline = new DateTime(dt.Ticks, DateTimeKind.Unspecified);
+        }
+
+        var ticket = new Ticket {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Description = description,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            Deadline = deadline,
+            AuthorId = authorId,
+            ExecutorId = dutyInfo.ResponsibleId,
+            BusinessProcessId = processId,
+            StatusId = status.Id,
+            Priority = priority,
+            NotificationIds = notificationIds,
+        };
+        _dbContext.Tickets.Add(ticket);
+        try 
+        {
+            _dbContext.SaveChanges();
+        }
+        catch (DbUpdateException ex)
+        {
+            var pgEx = ex.InnerException as PostgresException;
+            Console.WriteLine($"Postgres Error: {pgEx?.SqlState} - {pgEx?.MessageText}");
+            throw;
+        }
+
+        if (status.Comment != null) {   
+            _commentService.CreateComment(ticket.Id, status.Comment.Text, status.Comment.MentionedUserIds, robotId);
+        }
+
+        return ticket.Id;
+        
     }
 
     // TODO: обрабатывать исключения

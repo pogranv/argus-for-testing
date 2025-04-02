@@ -52,50 +52,44 @@ public class StatusService : IStatusService
     }   
     public List<Models.Status> GetStatuses(List<Guid> ids)
     {
-        using (var db = _dbContext)
-        {
-            List<Status> statuses = new();  
-            if (ids != null && ids.Count > 0) {
-                statuses = db.Statuses.Where(s => ids.Contains(s.Id)).ToList();
-            } else {
-                statuses = db.Statuses.ToList();
-            }
-
-            var userIds = statuses.SelectMany(s => s.MentionedUserIds).Distinct().ToList();
-            var usersInfo = _userService.GetUsersInfo(userIds);
-
-            var unexistingUserIds = userIds.Except(usersInfo.Select(u => u.Key)).ToList();
-            if (unexistingUserIds.Count > 0) {
-                throw new Exception("Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют");
-            }   
-
-            return statuses.Select(s => GetStatus(s, usersInfo)).ToList();
+        List<Status> statuses = new();  
+        if (ids != null && ids.Count > 0) {
+            statuses = _dbContext.Statuses.Where(s => ids.Contains(s.Id)).ToList();
+        } else {
+            statuses = _dbContext.Statuses.ToList();
         }
+
+        var userIds = statuses.SelectMany(s => s.MentionedUserIds).Distinct().ToList();
+        var usersInfo = _userService.GetUsersInfo(userIds);
+
+        var unexistingUserIds = userIds.Except(usersInfo.Select(u => u.Key)).ToList();
+        if (unexistingUserIds.Count > 0) {
+            throw new Exception("Пользователи с идентификаторами " + string.Join(", ", unexistingUserIds) + " не существуют");
+        }   
+
+        return statuses.Select(s => GetStatus(s, usersInfo)).ToList();
     }   
 
     public List<Models.Status> GetStatusesInGraph(Guid graphId)
     {
-        using (var db = _dbContext)
-        {
-            var statusFlows = db.StatusFlows.Where(sf => sf.GraphId == graphId).ToList();
-            var statuses = db.Statuses.Where(s => statusFlows.Select(sf => sf.StatusId).Contains(s.Id)).ToList();
+        var statusFlows = _dbContext.StatusFlows.Where(sf => sf.GraphId == graphId).ToList();
+        var statuses = _dbContext.Statuses.Where(s => statusFlows.Select(sf => sf.StatusId).Contains(s.Id)).ToList();
 
-            var userIds = statuses.SelectMany(s => s.MentionedUserIds).Distinct().ToList();
-            var usersInfo = _userService.GetUsersInfo(userIds);
+        var userIds = statuses.SelectMany(s => s.MentionedUserIds).Distinct().ToList();
+        var usersInfo = _userService.GetUsersInfo(userIds);
 
-            var result = statuses.Select(s => GetStatus(s, usersInfo)).ToList();
-            foreach (var status in result) {
-                status.OrderNum = statusFlows.First(sf => sf.StatusId == status.Id).OrderNum;
-                status.Transitions = statusFlows.Where(sf => sf.StatusId == status.Id)
-                                                .SelectMany(sf => sf.NextStatusIds)
-                                                .Select(nextStatusId => new Models.Transition {
-                                                    ToStatusId = nextStatusId,
-                                                    Name = statuses.First(s => s.Id == nextStatusId).Name
-                                                })
-                                                .ToList();
-            }
-            result = result.OrderBy(s => s.OrderNum).ToList();
-            return result;
+        var result = statuses.Select(s => GetStatus(s, usersInfo)).ToList();
+        foreach (var status in result) {
+            status.OrderNum = statusFlows.First(sf => sf.StatusId == status.Id).OrderNum;
+            status.Transitions = statusFlows.Where(sf => sf.StatusId == status.Id)
+                                            .SelectMany(sf => sf.NextStatusIds)
+                                            .Select(nextStatusId => new Models.Transition {
+                                                ToStatusId = nextStatusId,
+                                                Name = statuses.First(s => s.Id == nextStatusId).Name
+                                            })
+                                            .ToList();
         }
+        result = result.OrderBy(s => s.OrderNum).ToList();
+        return result;
     }
 }

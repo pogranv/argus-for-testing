@@ -134,3 +134,5 @@
 /Users/pogranv/Desktop/diplom/code/services/ProcessesApi/bin/Debug/net8.0/Npgsql.dll
 /Users/pogranv/Desktop/diplom/code/services/ProcessesApi/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /Users/pogranv/Desktop/diplom/code/services/ProcessesApi/obj/Debug/net8.0/ProcessesApi.sourcelink.json
+/Users/pogranv/Desktop/diplom/code/services/ProcessesApi/bin/Debug/net8.0/ProcessesApi.xml
+/Users/pogranv/Desktop/diplom/code/services/ProcessesApi/obj/Debug/net8.0/ProcessesApi.xml

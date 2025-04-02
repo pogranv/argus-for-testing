@@ -5,6 +5,7 @@ using SensorsApi.External.Interfaces;
 using SensorsApi.External.Mocks;
 using SensorsApi.Models;
 using SensorsApi.src.Repositories;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -24,25 +25,13 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
-// var useMocks = true;
-// if (useMocks)
-// {
-//     // Регистрируем мок
-//     builder.Services.AddSingleton<IProcessesService, ProcessesServiceMock>();
-// }
-// else
-// {
-//     // Регистрируем реальный сервис с HttpClient
-//     builder.Services.AddHttpClient<IProcessesService, ProcessesService>(client => 
-//     {
-//         client.BaseAddress = new Uri("http://processes_api:5002/");
-//         client.DefaultRequestHeaders.Accept.Add(
-//             new MediaTypeWithQualityHeaderValue("application/json"));
-//     });
-// }
 builder.Services.AddHttpClient<IProcessesService, ProcessesService>(client => 
     {
         client.BaseAddress = new Uri("http://processes_api:5002/");
@@ -70,6 +59,46 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Use(async (context, next) => {
+    if (context.Request.Path.StartsWithSegments("/swagger") || 
+        context.Request.Path.StartsWithSegments("/swagger-ui"))
+    {
+        await next();
+        return;
+    }
+    if (!context.Request.Headers.TryGetValue("UserId", out var userIdHeader))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("User ID header is required");
+        return;
+    }
+
+    if (!long.TryParse(userIdHeader, out var userId))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Invalid User ID format");
+        return;
+    }
+
+    if (!context.Request.Headers.TryGetValue("RobotId", out var robotIdHeader))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Robot ID header is required");
+        return;
+    }
+
+    if (!long.TryParse(robotIdHeader, out var robotId))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Invalid Robot ID format");
+        return;
+    }
+
+    context.Items["UserId"] = userId;
+    context.Items["RobotId"] = robotId;
+    await next();
+});
 
 app.UseHttpsRedirection();
 app.MapControllers();

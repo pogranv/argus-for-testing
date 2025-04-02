@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SensorsApi</name>
+    </assembly>
+    <members>
+        <member name="M:RecieverController.RecieveSensors(System.Guid)">
+            <summary>
+            Получает данные с датчика и создает тикет
+            </summary>
+            <param name="sensorId">Идентификатор датчика</param>
+            <returns>Идентификатор тикета</returns>
+        </member>
+        <member name="M:SensorsController.CreateSensor(SensorsApi.Models.View.Requests.CreateSensorRequest)">
+            <summary>
+            Создает новый датчик
+            </summary>
+            <param name="request">Данные для создания датчика</param>
+            <returns>Идентификатор датчика</returns>
+        </member>
+        <member name="M:SensorsController.UpdateSensor(System.Guid,SensorsApi.Models.View.Requests.UpdateSensorRequest)">
+            <summary>
+            Обновляет существующий датчик
+            </summary>
+            <param name="id">Идентификатор датчика</param>
+            <param name="request">Данные для обновления датчика</param>
+            <returns>Идентификатор датчика</returns>    
+        </member>
+        <member name="M:SensorsController.GetSensors(System.Collections.Generic.List{System.Guid})">
+            <summary>
+            Получает список датчиков
+            </summary>
+            <param name="ids">Список идентификаторов датчиков</param>
+            <returns>Список датчиков</returns>
+        </member>
+        <member name="F:SensorsApi.Models.View.Priority.low">
+            <summary>
+            Низкий приоритет
+            </summary>
+        </member>
+        <member name="F:SensorsApi.Models.View.Priority.medium">
+            <summary>
+            Средний приоритет
+            </summary>
+        </member>
+        <member name="F:SensorsApi.Models.View.Priority.high">
+            <summary>
+            Высокий приоритет
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.CreateSensorRequest.TicketTitle">
+            <summary>
+            Название тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.CreateSensorRequest.TicketDescription">
+            <summary>
+            Описание тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.CreateSensorRequest.Priority">
+            <summary>
+            Приоритет тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.CreateSensorRequest.ResolveDaysCount">
+            <summary>
+            Количество дней для решения, которые будут проставлены в тикете, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.CreateSensorRequest.ProcessId">
+            <summary>
+            Идентификатор процесса, который будет использоваться для создания тикета
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.UpdateSensorRequest.TicketTitle">
+            <summary>
+            Название тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.UpdateSensorRequest.TicketDescription">
+            <summary>
+            Описание тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.UpdateSensorRequest.Priority">
+            <summary>
+            Приоритет тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.UpdateSensorRequest.ResolveDaysCount">
+            <summary>
+            Количество дней для решения, которые будут проставлены в тикете, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Requests.UpdateSensorRequest.ProcessId">
+            <summary>
+            Идентификатор процесса, который будет использоваться для создания тикета
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.CreateUpdateSensorResponse.SensorId">
+            <summary>
+            Идентификатор датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.ErrorResponse.Message">
+            <summary>
+            Сообщение об ошибке
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.Id">
+            <summary>
+            Идентификатор датчика, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.TicketTitle">
+            <summary>
+            Название тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.TicketDescription">
+            <summary>
+            Описание тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.Priority">
+            <summary>
+            Приоритет тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.ResolveDaysCount">
+            <summary>
+            Количество дней для решения, которые будут проставлены в тикете, который создается при срабатывании датчика
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorResponse.ProcessId">
+            <summary>
+            Идентификатор процесса, который будет использоваться для создания тикета
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.GetSensorsResponse.Sensors">
+            <summary>
+            Список датчиков
+            </summary>
+        </member>
+        <member name="P:SensorsApi.Models.View.Responses.TriggerSensorResponse.TicketId">
+            <summary>
+            Идентификатор тикета, который создается при срабатывании датчика
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -23,6 +23,19 @@ services:
       sensors_db:
         condition: service_healthy
 
+  proxy-api:
+    ports:
+      - "5000:5000"
+    build:
+      context: ./ProxyService
+      dockerfile: Dockerfile
+    container_name: proxy_api
+    environment:
+      - TZ=Europe/Moscow
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - microservices-network
+
   sensors_db:
     image: postgres:latest
     container_name: sensors_db

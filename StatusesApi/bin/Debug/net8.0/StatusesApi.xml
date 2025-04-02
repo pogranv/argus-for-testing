@@ -1,0 +1,372 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>StatusesApi</name>
+    </assembly>
+    <members>
+        <member name="M:GraphsController.CreateGraph(StatusesApi.Models.View.Requests.CreateGraphRequest)">
+            <summary>
+            Создание графа
+            </summary>
+            <param name="request">Запрос на создание графа</param>
+            <returns>ID созданного графа</returns>
+        </member>
+        <member name="M:GraphsController.GetStatusTransition(System.Nullable{System.Guid},System.Guid)">
+            <summary>
+            Получение доступных переходов для статуса
+            </summary>
+            <param name="statusId">ID статуса</param>
+            <param name="graphId">ID графа</param>
+            <returns>Список доступных переходов</returns>
+        </member>
+        <member name="M:GraphsController.GetGraphs(System.Collections.Generic.List{System.Guid})">
+            <summary>
+            Получение списка графов
+            </summary>
+            <param name="graphIds">Список ID графов</param>
+            <returns>Список графов</returns>
+        </member>
+        <member name="M:StatusesController.CreateStatus(CreateStatusRequest)">
+            <summary>
+            Создание статуса
+            </summary>
+            <param name="request">Запрос на создание статуса</param>
+            <returns>ID созданного статуса</returns>
+        </member>
+        <member name="M:StatusesController.UpdateStatus(StatusesApi.Models.View.Requests.UpdateStatusRequest)">
+            <summary>
+            Обновление статуса
+            </summary>
+            <param name="request">Запрос на обновление статуса</param>
+            <returns>ID обновленного статуса</returns>
+        </member>
+        <member name="M:StatusesController.GetStatuses(System.Collections.Generic.List{System.Guid})">
+            <summary>
+            Получение списка статусов
+            </summary>
+            <param name="ids">Список ID статусов</param>
+            <returns>Список статусов</returns>
+        </member>
+        <member name="M:StatusesApi.External.Interfaces.IDutyService.IsDutyExists(System.Int64)">
+            <summary>
+            Проверяет, существует ли дежурство  
+            </summary>
+            <param name="dutyId">Идентификатор дежурства</param>
+            <returns>True, если дежурство существует, иначе false</returns>
+        </member>
+        <member name="M:StatusesApi.External.Interfaces.IUserService.GetUnexistingUsers(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Получает список пользователей, которые не существуют в системе
+            </summary>
+            <param name="userIds">Список идентификаторов пользователей</param>
+            <returns>Список идентификаторов пользователей, которые не существуют в системе</returns>
+        </member>
+        <member name="M:StatusesApi.External.Interfaces.IUserService.GetUsersInfo(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Получает информацию о пользователях по их идентификаторам
+            </summary>
+            <param name="userIds">Список идентификаторов пользователей</param>
+            <returns>Словарь, где ключом является идентификатор пользователя, а значением - информация о пользователе</returns>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.Comment.Text">
+            <summary>
+            Текст комментария
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.Comment.UserIds">
+            <summary>
+            Список id пользователей, которые будут упомянуты в комментарии
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.CreateGraphRequest.Name">
+            <summary>
+            Название графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.CreateGraphRequest.Description">
+            <summary>
+            Описание графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.CreateGraphRequest.Vertexes">
+            <summary>
+            Id статусов. Передается для того, чтобы определять порядковый номер статусов. Индекс в массиве = порядковый номер
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.CreateGraphRequest.Edges">
+            <summary>
+            Ребра графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.StatusId">
+            <summary>
+            Id статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.EscalationSLA">
+            <summary>
+            SLA - время в минутах для решения инцидента
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.Notification">
+            <summary>
+            Настройки уведомлений. Если не указать, то уведомления не будут отправляться
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.Comment">
+            <summary>
+            Комментарий к статусу. Если не указать, то комментарий не будет отправляться
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Requests.UpdateStatusRequest.DutyId">
+            <summary>
+            Id дежурства
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Edge.From">
+            <summary>   
+            Начальная вершина
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Edge.To">
+            <summary>
+            Конечная вершина
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Notification.DeliveryType">
+            <summary>
+            Тип нотификации
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Notification.PingInterval">
+            <summary>
+            Интервал пинга. Если не указать, то пинг будет отправляться разово
+            </summary>
+        </member>
+        <member name="F:StatusesApi.Models.View.NotificationDeliveryType.phone">
+            <summary>
+            Телефон
+            </summary>
+        </member>
+        <member name="F:StatusesApi.Models.View.NotificationDeliveryType.email">
+            <summary>
+            Email
+            </summary>
+        </member>
+        <member name="F:StatusesApi.Models.View.NotificationDeliveryType.sms">
+            <summary>
+            SMS
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.Comment.Text">
+            <summary>
+            Текст комментария
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.Comment.UsersInfo">
+            <summary>
+            Информация о пользователях
+            </summary>  
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.CreateGraphResponse.GraphId">
+            <summary>
+            Id графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.CreateStatusResponse.StatusId">
+            <summary>
+            Id статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.ErrorResponse.Message">
+            <summary>
+            Сообщение об ошибке
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GetGraphsResponse.Graphs">
+            <summary>
+            Список графов
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GetStatusesResponse.Statuses">
+            <summary>
+            Список статусов
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GraphResponse.Id">
+            <summary>
+            Id графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GraphResponse.Name">
+            <summary>
+            Название графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GraphResponse.Description">
+            <summary>
+            Описание графа
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.GraphResponse.Statuses">
+            <summary>
+            Список статусов
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Id">
+            <summary>
+            Id статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.EscalationSLA">
+            <summary>
+            SLA - время в минутах для решения инцидента
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Notification">
+            <summary>
+            Настройки уведомлений
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Comment">
+            <summary>
+            Комментарий к статусу
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.OrderNum">
+            <summary>
+            Номер статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.Transitions">
+            <summary>
+            Список переходов
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusInGraphResponse.DutyId">
+            <summary>
+            Id дежурства
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.Id">
+            <summary>
+            Id статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.EscalationSLA">
+            <summary>
+            SLA - время в минутах для решения инцидента
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.Notification">
+            <summary>
+            Настройки уведомлений
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.Comment">
+            <summary>
+            Комментарий к статусу
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.StatusResponse.DutyId">
+            <summary>
+            Id дежурства
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.TransitionsResponse.Transitions">
+            <summary>
+            Список переходов
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.UpdateStatusResponse.StatusId">
+            <summary>
+            Id статуса
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.UserInfo.Id">
+            <summary>
+            Id пользователя
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.UserInfo.UserName">
+            <summary>
+            Имя пользователя
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Responses.UserInfo.Avatar">
+            <summary>
+            Ссылка на аватар пользователя
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Transition.StatusId">
+            <summary>
+            Id статуса, на который переходит инцидент
+            </summary>
+        </member>
+        <member name="P:StatusesApi.Models.View.Transition.Name">
+            <summary>
+            Название статуса, на который переходит инцидент
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.Name">
+            <summary>
+            Название статуса
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.Description">
+            <summary>
+            Описание статуса
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.EscalationSLA">
+            <summary>
+            SLA - время в минутах для решения инцидента
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.Notification">
+            <summary>
+            Настройки уведомлений. Если не указать, то уведомления не будут отправляться
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.Comment">
+            <summary>
+            Комментарий к статусу. Если не указать, то комментарий не будет отправляться
+            </summary>
+        </member>
+        <member name="P:CreateStatusRequest.DutyId">
+            <summary>
+            Id дежурства
+            </summary>
+        </member>
+    </members>
+</doc>

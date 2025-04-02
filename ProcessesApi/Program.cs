@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,10 @@ builder.Services.AddCors(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
 builder.Services.AddControllers();
 
 bool useMocks = true;
@@ -86,6 +91,8 @@ builder.Services.AddDbContext<ProcessesDbContext>(options =>
     options.UseNpgsql(connectionString, npgsqlOptions =>
         npgsqlOptions.MapEnum<Priority>("ticket_priority_type")));
 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -98,24 +105,39 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.Use(async (context, next) => {
-    // if (!context.Request.Headers.TryGetValue("UserId", out var userIdHeader))
-    // {
-    //     context.Response.StatusCode = StatusCodes.Status400BadRequest;
-    //     await context.Response.WriteAsync("User ID header is required");
-    //     return;
-    // }
+    if (context.Request.Path.StartsWithSegments("/swagger") || 
+        context.Request.Path.StartsWithSegments("/swagger-ui"))
+    {
+        await next();
+        return;
+    }
+    if (!context.Request.Headers.TryGetValue("UserId", out var userIdHeader))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("User ID header is required");
+        return;
+    }
 
-    // if (!long.TryParse(userIdHeader, out var userId))
-    // {
-    //     context.Response.StatusCode = StatusCodes.Status400BadRequest;
-    //     await context.Response.WriteAsync("Invalid User ID format");
-    //     return;
-    // }
+    if (!long.TryParse(userIdHeader, out var userId))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Invalid User ID format");
+        return;
+    }
 
-    // TODO: real user id
+    if (!context.Request.Headers.TryGetValue("RobotId", out var robotIdHeader))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Robot ID header is required");
+        return;
+    }
 
-    long userId = 1;
-    long robotId = 1;
+    if (!long.TryParse(robotIdHeader, out var robotId))
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await context.Response.WriteAsync("Invalid Robot ID format");
+        return;
+    }
 
     context.Items["UserId"] = userId;
     context.Items["RobotId"] = robotId;
